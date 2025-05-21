@@ -204,7 +204,7 @@ SmallDoc >> encodeClass: class on: stream [
 					</pre>
 				</details>'.
 	class organization classComment ifNotEmpty: [ :comment |
-		self encodeComment: comment on: stream ].
+		self encodeClassComment: comment on: stream ].
 	stream << '
 			</li>
 		</ul>
@@ -218,6 +218,17 @@ SmallDoc >> encodeClass: class on: stream [
 		</li>
 	</ul>
 </div>'
+]
+
+{ #category : #encoding }
+SmallDoc >> encodeClassComment: comment on: stream [
+
+	stream << '
+	<div class="comment">
+'.
+	SmallDocClassCommentEncoder encode: comment on: stream.
+	stream << '
+	</div>'
 ]
 
 { #category : #encoding }
@@ -269,17 +280,6 @@ SmallDoc >> encodeClassNavigation: class on: stream [
 		on: stream.
 	stream nextPutAll: '
 		</div>'
-]
-
-{ #category : #encoding }
-SmallDoc >> encodeComment: comment on: stream [
-
-	stream << '
-	<div class="comment">
-'.
-	SmallDocClassCommentEncoder encode: comment on: stream.
-	stream << '
-	</div>'
 ]
 
 { #category : #encoding }
@@ -539,11 +539,28 @@ SmallDoc >> encodeMethod: method on: stream [
 	method comment ifNotNil: [ :comment |
 		stream << '
 		<div class="methodComment">
-' << comment asHTMLString << '
+'.
+		self encodeMethodComment: comment on: stream.
+		stream << '
 		</div>' ].
 	stream << '
 	</li>
 </ul>'
+]
+
+{ #category : #encoding }
+SmallDoc >> encodeMethodComment: comment on: stream [
+
+	self flag: #TODO. "Implement and use SmallDocMethodCommentEncoder, if we want differences from class comments.
+	Class comments are usually more structured because devs know they are using Microdown.
+	Method comments are more messy and free-form, so we should probably ignore most Microdown features there."
+
+	"Trim comment lines, because they usually have indentation at the start"
+	comment lineIndicesDo: [ :start :endWithoutDelimiters :end |
+		| line |
+		line := comment copyFrom: start to: endWithoutDelimiters.
+		stream nextPutAll: line trimBoth asHTMLString.
+		end = comment size ifFalse: [ stream nextPut: Character cr ] ]
 ]
 
 { #category : #encoding }
@@ -682,11 +699,10 @@ SmallDoc >> encodeOverviewOn: stream [
 			detect: [ :class | class superclass == PackageManifest ]
 			ifFound: [ :manifest |
 				manifest organization classComment ifNotEmpty: [ :comment | "read the first line of the comment"
-					| firstSep |
 					stream nextPutAll:
-						((firstSep := comment indexOf: Character cr) == 0
-							 ifTrue: [ comment ]
-							 ifFalse: [ comment copyFrom: 1 to: firstSep ]) ] ].
+						(self
+							 encodeShortComment: comment
+							 with: SmallDocOverviewCommentEncoder) ] ].
 		stream << '
 						</td>
 					</tr>' ].
@@ -718,7 +734,7 @@ SmallDoc >> encodePackage: package on: stream [
 	<h2 id="packageName">' << package name << '</h2>'.
 	manifest ifNotNil: [
 		manifest organization classComment ifNotEmpty: [ :comment |
-			self encodeComment: comment on: stream ] ].
+			self encodeClassComment: comment on: stream ] ].
 	stream << '
 </div>
 <div class="contentContainer">
@@ -739,12 +755,10 @@ SmallDoc >> encodePackage: package on: stream [
 				</td>
 				<td class="colLast">'.
 		class organization classComment ifNotEmpty: [ :comment | "read the first line of the comment"
-			| firstSep |
-			stream nextPutAll: ((firstSep := comment indexOfAnyOf: {
-						              $..
-						              Character cr }) == 0
-					 ifTrue: [ comment ]
-					 ifFalse: [ comment copyFrom: 1 to: firstSep ]) asHTMLString ].
+			stream nextPutAll:
+				(self
+					 encodeShortComment: comment
+					 with: SmallDocClassCommentEncoder) ].
 		stream << '
 				</td>
 			</tr>' ].
@@ -774,6 +788,17 @@ SmallDoc >> encodePackageNavigation: package on: stream [
 		on: stream.
 	stream nextPutAll: '
 		</div>'
+]
+
+{ #category : #encoding }
+SmallDoc >> encodeShortComment: comment with: encoderClass [
+
+	| firstSep shortComment |
+	firstSep := comment indexOf: Character cr.
+	shortComment := encoderClass encode: (firstSep == 0
+			                 ifTrue: [ comment ]
+			                 ifFalse: [ comment copyFrom: 1 to: firstSep ]).
+	^ shortComment copyFrom: 4 to: shortComment size - 4 "ignore <p> and </p>"
 ]
 
 { #category : #encoding }
@@ -822,7 +847,7 @@ SmallDoc >> packages: aCollectionOfRPackage [
 	packages := packages sorted: [ :a :b | a name < b name ]
 ]
 
-{ #category : #encoding }
+{ #category : #accessing }
 SmallDoc >> title [
 
 	^ title ifNil: [
@@ -830,7 +855,7 @@ SmallDoc >> title [
 		           , SystemVersion current major printString ]
 ]
 
-{ #category : #encoding }
+{ #category : #accessing }
 SmallDoc >> title: aString [
 
 	title := aString

@@ -20,6 +20,12 @@ SmallDocClassCommentEncoder >> encodeImage: imageData [
 	"use JPEG instead? it is lighter but we can clearly see the compression"
 ]
 
+{ #category : #'visiting - inline elements' }
+SmallDocClassCommentEncoder >> relativePathToRoot [
+
+	^ '..'
+]
+
 { #category : #visiting }
 SmallDocClassCommentEncoder >> visitAgenda: anAgenda [
 
@@ -268,7 +274,7 @@ SmallDocClassCommentEncoder >> visitMonospace: aFormat [
 	stream nextPutAll: '<code class="inline">'.
 	(ref := SmallDocSemanticAction from: aFormat text) entity ifNotNil: [
 		:entity | "either a package, class or method"
-		stream nextPutAll: '<a href="../'.
+		stream << '<a href="' << self relativePathToRoot << '/'.
 		entity isCompiledMethod
 			ifTrue: [
 				stream << entity methodClass package name << '/'
@@ -366,7 +372,7 @@ SmallDocClassCommentEncoder >> visitScriptResult: result [
 	result isString ifTrue: [ ^ self encode: result ].
 	result isText ifTrue: [ ^ self shouldBeImplemented ].
 	result isMorph ifTrue: [ ^ self encodeImage: result imageForm ].
-	result isForm ifTrue: [ ^ self shouldBeImplemented ].
+	result isForm ifTrue: [ ^ self encodeImage: result ].
 	(result isKindOf: MicElement) ifTrue: [ ^ result accept: self ].
 	stream nextPutAll: result printString
 ]

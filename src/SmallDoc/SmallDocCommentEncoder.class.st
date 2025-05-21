@@ -10,6 +10,12 @@ Class {
 	#category : #SmallDoc
 }
 
+{ #category : #converting }
+SmallDocCommentEncoder class >> encode: aString [
+
+	^ String streamContents: [ :s | self encode: aString on: s ]
+]
+
 { #category : #private }
 SmallDocCommentEncoder class >> encode: aString on: aWriteStream [
 
