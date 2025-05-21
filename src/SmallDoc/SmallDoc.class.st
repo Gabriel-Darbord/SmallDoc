@@ -566,17 +566,34 @@ SmallDoc >> encodeMethodComment: comment on: stream [
 { #category : #encoding }
 SmallDoc >> encodeMethodsOf: class on: stream [
 
-	class methods ifEmpty: [ ^ self ].
+	| instMethods classMethods |
 	self flag: #TODO. "inherited methods, trait methods"
+	instMethods := class methods.
+	classMethods := class class methods.
+	(instMethods isEmpty and: [ classMethods isEmpty ]) ifTrue: [ ^ self ].
+
 	stream << '
-<!-- METHODS -->
+<!-- METHODS -->'.
+
+	classMethods ifNotEmpty: [ "class side"
+		stream << '
+<ul class="blockList">
+	<li class="blockList">
+		<h3>Class Methods</h3>'.
+		classMethods do: [ :method | self encodeMethod: method on: stream ].
+		stream << '
+	</li>
+</ul>' ].
+
+	instMethods ifNotEmpty: [ "instance side"
+		stream << '
 <ul class="blockList">
 	<li class="blockList">
 		<h3>Methods</h3>'.
-	class methods do: [ :method | self encodeMethod: method on: stream ].
-	stream << '
+		class methods do: [ :method | self encodeMethod: method on: stream ].
+		stream << '
 	</li>
-</ul>'
+</ul>' ]
 ]
 
 { #category : #encoding }
