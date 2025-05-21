@@ -1,6 +1,6 @@
 # SmallDoc
 
-A JavaDoc-style documentation generator for Smalltalk
+A JavaDoc-style documentation generator for Smalltalk.
 
 ## Installing
 
@@ -10,3 +10,13 @@ Metacello new
   baseline: 'SmallDoc';
   load
 ```
+
+## Usage
+
+Simply supply a list of package to document, and an export path.
+```st
+SmallDoc
+  write: Smalltalk packages
+  to: Smalltalk imagePath asFileReference parent / 'SmallDoc'
+```
+Then open the generated `index.html` with your favorite navigator.
