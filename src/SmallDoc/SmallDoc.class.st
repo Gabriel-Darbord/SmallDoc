@@ -20,7 +20,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'packages',
-		'outputDirectory'
+		'outputDirectory',
+		'title'
 	],
 	#category : #SmallDoc
 }
@@ -35,6 +36,16 @@ SmallDoc class >> write: packages to: outputDirectory [
 ]
 
 { #category : #writing }
+SmallDoc class >> write: packages to: outputDirectory title: aString [
+
+	^ self new
+		  packages: packages;
+		  outputDirectory: outputDirectory;
+		  title: aString;
+		  write
+]
+
+{ #category : #encoding }
 SmallDoc >> encodeAllClassesFrameOn: stream [
 
 	| classes |
@@ -48,8 +59,7 @@ SmallDoc >> encodeAllClassesFrameOn: stream [
  	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>All classes (' << SystemVersion current type << ' '
-	<< SystemVersion current major printString << ')</title>
+		<title>All classes (' << self title << ')</title>
 		<style>
 body {
 	color: #353833;
@@ -94,7 +104,7 @@ a:hover, a:focus {
 </html>'
 ]
 
-{ #category : #writing }
+{ #category : #encoding }
 SmallDoc >> encodeAllPackagesFrameOn: stream [
 
 	stream << '<!DOCTYPE html>
@@ -102,8 +112,7 @@ SmallDoc >> encodeAllPackagesFrameOn: stream [
  	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>All packages (' << SystemVersion current type << ' '
-	<< SystemVersion current major printString << ')</title>
+		<title>All packages (' << self title << ')</title>
 		<style>
 body {
 	color: #353833;
@@ -273,7 +282,7 @@ SmallDoc >> encodeComment: comment on: stream [
 	</div>'
 ]
 
-{ #category : #writing }
+{ #category : #encoding }
 SmallDoc >> encodeDeprecatedNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -292,7 +301,7 @@ SmallDoc >> encodeDeprecatedNavigationOn: stream [
 		</div>'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #encoding }
 SmallDoc >> encodeDeprecatedOn: stream [
 
 	stream nextPutAll: '
@@ -365,15 +374,14 @@ SmallDoc >> encodeFooterOn: stream [
 ]
 
 { #category : #encoding }
-SmallDoc >> encodeHeadTitled: title relativePath: path on: stream [
+SmallDoc >> encodeHeadTitled: headTitle relativePath: path on: stream [
 
 	stream << '<!DOCTYPE html>
 <html lang="en">
  	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>' << title << ' (' << SystemVersion current type << ' '
-	<< SystemVersion current major printString << ')</title>
+		<title>' << headTitle << ' (' << self title << ')</title>
 		<link rel="stylesheet" href="'.
 	path ifNotEmpty: [ stream << path << '/' ].
 	stream nextPutAll: 'styles.css">
@@ -389,8 +397,7 @@ SmallDoc >> encodeIndexOn: stream [
  	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Documentation (' << SystemVersion current type << ' '
-	<< SystemVersion current major printString << ')</title>
+		<title>Documentation (' << self title << ')</title>
 		<link rel="stylesheet" href="styles.css">
 		<style>
 body, html {
@@ -555,7 +562,7 @@ SmallDoc >> encodeMethodsOf: class on: stream [
 </ul>'
 ]
 
-{ #category : #writing }
+{ #category : #encoding }
 SmallDoc >> encodeOrganizationNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -615,19 +622,19 @@ SmallDoc >> encodeOrganizationOn: stream [
 						<< '</span></li>' ].
 					stream nextPutAll: '
 									</ul>
-								</li>' ].
+								</li>' "/class" ].
 				stream nextPutAll: '
 							</ul>
-						</li>' ].
-			stream nextPutAll: '
+						</li>' "/category" ] ].
+		stream nextPutAll: '
 					</ul>
-				</li>' ] ].
+				</li>' "/package" ].
 	stream nextPutAll: '
 			</ul>
 		</div>'
 ]
 
-{ #category : #writing }
+{ #category : #encoding }
 SmallDoc >> encodeOverviewNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -651,9 +658,7 @@ SmallDoc >> encodeOverviewOn: stream [
 
 	stream << '
 		<div class="header">
-			<h1 class="title">' << SystemVersion current type << ' '
-	<< SystemVersion current major printString
-	<< '<br/>API Specification</h1>
+			<h1 class="title">' << self title << '<br/>API Specification</h1>
 		</div>
 		<div class="contentContainer">
 			<table class="overview" border="0" cellpadding="3" cellspacing="0">
@@ -749,7 +754,7 @@ SmallDoc >> encodePackage: package on: stream [
 </div>'
 ]
 
-{ #category : #writing }
+{ #category : #encoding }
 SmallDoc >> encodePackageNavigation: package on: stream [
 
 	stream nextPutAll: '
@@ -817,6 +822,20 @@ SmallDoc >> packages: aCollectionOfRPackage [
 	packages := packages sorted: [ :a :b | a name < b name ]
 ]
 
+{ #category : #encoding }
+SmallDoc >> title [
+
+	^ title ifNil: [
+		  title := SystemVersion current type , ' '
+		           , SystemVersion current major printString ]
+]
+
+{ #category : #encoding }
+SmallDoc >> title: aString [
+
+	title := aString
+]
+
 { #category : #writing }
 SmallDoc >> write [
 
@@ -880,7 +899,7 @@ SmallDoc >> writeIndex [
 	self flag: #TODO "the full A-Z index (+ symbols)"
 ]
 
-{ #category : #encoding }
+{ #category : #writing }
 SmallDoc >> writeOrganization [
 	"Tree of packages, tags, classes, protocols, methods"
 
