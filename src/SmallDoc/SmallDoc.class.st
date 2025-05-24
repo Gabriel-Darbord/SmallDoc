@@ -16,17 +16,18 @@ The documentation describes the following information:
 - Index of all documented entity
 "
 Class {
-	#name : #SmallDoc,
-	#superclass : #Object,
+	#name : 'SmallDoc',
+	#superclass : 'Object',
 	#instVars : [
 		'packages',
 		'outputDirectory',
 		'title'
 	],
-	#category : #SmallDoc
+	#category : 'SmallDoc',
+	#package : 'SmallDoc'
 }
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc class >> write: packages to: outputDirectory [
 	"Overwrites all files in output directory"
 
@@ -36,7 +37,7 @@ SmallDoc class >> write: packages to: outputDirectory [
 		  overwrite
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc class >> write: packages to: outputDirectory title: aString [
 	"Overwrites all files in output directory"
 
@@ -47,7 +48,7 @@ SmallDoc class >> write: packages to: outputDirectory title: aString [
 		  overwrite
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeAllClassesFrameOn: stream [
 
 	| classes |
@@ -106,7 +107,7 @@ a:hover, a:focus {
 </html>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeAllPackagesFrameOn: stream [
 
 	stream << '<!DOCTYPE html>
@@ -160,7 +161,7 @@ a:hover, a:focus {
 </html>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeClass: class on: stream [
 
 	stream << '
@@ -190,8 +191,8 @@ SmallDoc >> encodeClass: class on: stream [
 		stream << '
 				<div class="block">
 					<span class="deprecatedLabel">Deprecated.</span>'.
-		class class methodDict
-			at: #isDeprecated
+		class class
+			compiledMethodAt: #isDeprecated
 			ifPresent: [ :deprecation |
 				deprecation comment ifNotNil: [ :comment |
 					stream << '<span class="deprecationComment">' << comment
@@ -205,7 +206,7 @@ SmallDoc >> encodeClass: class on: stream [
 ' << class definitionString asHTMLString << '
 					</pre>
 				</details>'.
-	class organization classComment ifNotEmpty: [ :comment |
+	class classComment ifNotEmpty: [ :comment |
 		self encodeClassComment: comment on: stream ].
 	stream << '
 			</li>
@@ -222,7 +223,7 @@ SmallDoc >> encodeClass: class on: stream [
 </div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeClassComment: comment on: stream [
 
 	stream << '
@@ -233,7 +234,7 @@ SmallDoc >> encodeClassComment: comment on: stream [
 	</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeClassInheritance: class on: stream [
 
 	| superclasses |
@@ -262,7 +263,7 @@ SmallDoc >> encodeClassInheritance: class on: stream [
 	</ul>' ]
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeClassNavigation: class on: stream [
 
 	stream nextPutAll: '
@@ -284,7 +285,7 @@ SmallDoc >> encodeClassNavigation: class on: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeDeprecatedNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -303,7 +304,7 @@ SmallDoc >> encodeDeprecatedNavigationOn: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeDeprecatedOn: stream [
 
 	stream nextPutAll: '
@@ -334,7 +335,7 @@ SmallDoc >> encodeDeprecatedOn: stream [
 </div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeFieldsOf: class on: stream [
 
 	class slots ifEmpty: [ ^ self ].
@@ -367,7 +368,7 @@ SmallDoc >> encodeFieldsOf: class on: stream [
 </ul>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeFooterOn: stream [
 
 	stream << '
@@ -375,7 +376,7 @@ SmallDoc >> encodeFooterOn: stream [
 </html>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeHeadTitled: headTitle relativePath: path on: stream [
 
 	stream << '<!DOCTYPE html>
@@ -392,7 +393,7 @@ SmallDoc >> encodeHeadTitled: headTitle relativePath: path on: stream [
 	<body>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeIndexOn: stream [
 
 	stream << '<!DOCTYPE html>
@@ -514,7 +515,7 @@ function loadFrames() {
 </html>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeMethod: method on: stream [
 
 	| selector |
@@ -523,7 +524,7 @@ SmallDoc >> encodeMethod: method on: stream [
 	<li class="blockList">
 		<a name="' << (selector := method selector) << '"></a>
 		<h4>' << selector << '</h4>
-		<div class="methodProtocol">' << method protocol << '</div>
+		<div class="methodProtocol">' << method protocol name << '</div>
 		<pre>'.
 	selector isUnary
 		ifTrue: [ stream nextPutAll: selector ]
@@ -551,7 +552,7 @@ SmallDoc >> encodeMethod: method on: stream [
 </ul>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeMethodComment: comment on: stream [
 
 	self flag: #TODO. "Implement and use SmallDocMethodCommentEncoder, if we want differences from class comments.
@@ -566,7 +567,7 @@ SmallDoc >> encodeMethodComment: comment on: stream [
 		end = comment size ifFalse: [ stream nextPut: Character cr ] ]
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeMethodsOf: class on: stream [
 
 	| instMethods classMethods |
@@ -599,7 +600,7 @@ SmallDoc >> encodeMethodsOf: class on: stream [
 </ul>' ]
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeOrganizationNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -618,7 +619,7 @@ SmallDoc >> encodeOrganizationNavigationOn: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeOrganizationOn: stream [
 	"Tree of packages, tags, classes, protocols, methods"
 
@@ -652,8 +653,7 @@ SmallDoc >> encodeOrganizationOn: stream [
 									<a href="' << package name << '/' << class name
 					<< '.html" class="organization-class">' << class name << '</a>
 									<ul>'.
-					(class organization categories sort: [ :a :b | a < b ]) do: [
-						:protocol |
+					(class categories sort: [ :a :b | a < b ]) do: [ :protocol |
 						stream << '
 										<li><span class="organization-protocol">' << protocol
 						<< '</span></li>' ].
@@ -671,7 +671,7 @@ SmallDoc >> encodeOrganizationOn: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeOverviewNavigationOn: stream [
 
 	stream nextPutAll: '
@@ -690,7 +690,7 @@ SmallDoc >> encodeOverviewNavigationOn: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeOverviewOn: stream [
 
 	stream << '
@@ -718,7 +718,7 @@ SmallDoc >> encodeOverviewOn: stream [
 		package definedClasses
 			detect: [ :class | class superclass == PackageManifest ]
 			ifFound: [ :manifest |
-				manifest organization classComment ifNotEmpty: [ :comment | "read the first line of the comment"
+				manifest classComment ifNotEmpty: [ :comment | "read the first line of the comment"
 					stream nextPutAll:
 						(self
 							 encodeShortComment: comment
@@ -734,7 +734,7 @@ SmallDoc >> encodeOverviewOn: stream [
 </html>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodePackage: package on: stream [
 	"Do not write about the manifest class, it is used as metadata for the package."
 
@@ -753,7 +753,7 @@ SmallDoc >> encodePackage: package on: stream [
 <div class="header">
 	<h2 id="packageName">' << package name << '</h2>'.
 	manifest ifNotNil: [
-		manifest organization classComment ifNotEmpty: [ :comment |
+		manifest classComment ifNotEmpty: [ :comment |
 			self encodeClassComment: comment on: stream ] ].
 	stream << '
 </div>
@@ -774,7 +774,7 @@ SmallDoc >> encodePackage: package on: stream [
 					<a href="' << class name << '.html">' << class name << '</a>
 				</td>
 				<td class="colLast">'.
-		class organization classComment ifNotEmpty: [ :comment | "read the first line of the comment"
+		class classComment ifNotEmpty: [ :comment | "read the first line of the comment"
 			stream nextPutAll:
 				(self
 					 encodeShortComment: comment
@@ -788,7 +788,7 @@ SmallDoc >> encodePackage: package on: stream [
 </div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodePackageNavigation: package on: stream [
 
 	stream nextPutAll: '
@@ -810,7 +810,7 @@ SmallDoc >> encodePackageNavigation: package on: stream [
 		</div>'
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeShortComment: comment with: encoderClass [
 
 	| firstSep shortComment |
@@ -821,7 +821,7 @@ SmallDoc >> encodeShortComment: comment with: encoderClass [
 	^ shortComment copyFrom: 4 to: shortComment size - 4 "ignore <p> and </p>"
 ]
 
-{ #category : #encoding }
+{ #category : 'encoding' }
 SmallDoc >> encodeSubNavigationRelativeTo: path on: stream [
 
 	| separator |
@@ -838,19 +838,19 @@ SmallDoc >> encodeSubNavigationRelativeTo: path on: stream [
 			</ul>'
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDoc >> outputDirectory [
 
 	^ outputDirectory
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDoc >> outputDirectory: aFileReference [
 
 	outputDirectory := aFileReference asFileReference
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> overwrite [
 	"Usually what you'd want"
 
@@ -858,24 +858,24 @@ SmallDoc >> overwrite [
 	self write
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDoc >> packages [
 
 	^ packages
 ]
 
-{ #category : #accessing }
-SmallDoc >> packages: aCollectionOfRPackage [
+{ #category : 'accessing' }
+SmallDoc >> packages: aCollectionOfPackage [
 	"Ensure uniqueness and don't include the default package."
 
-	packages := Set new: aCollectionOfRPackage size.
-	aCollectionOfRPackage do: [ :package |
-		package name == RPackage defaultPackageName ifFalse: [
+	packages := Set new: aCollectionOfPackage size.
+	aCollectionOfPackage do: [ :package |
+		package name == UndefinedPackage undefinedPackageName ifFalse: [
 			packages add: package ] ].
 	packages := packages sorted: [ :a :b | a name < b name ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDoc >> title [
 
 	^ title ifNil: [
@@ -883,13 +883,13 @@ SmallDoc >> title [
 		           , SystemVersion current major printString ]
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDoc >> title: aString [
 
 	title := aString
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> write [
 
 	packages do: [ :package | self writePackage: package ].
@@ -902,7 +902,7 @@ SmallDoc >> write [
 	^ outputDirectory
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeClass: class [
 
 	self
@@ -915,7 +915,7 @@ SmallDoc >> writeClass: class [
 			self encodeFooterOn: stream ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeDeprecated [
 
 	self writeFile: outputDirectory / 'deprecated.html' do: [ :stream |
@@ -925,7 +925,7 @@ SmallDoc >> writeDeprecated [
 		self encodeFooterOn: stream ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeFavicon [
 
 	(outputDirectory / 'favicon.png') ensureCreateFile
@@ -933,14 +933,14 @@ SmallDoc >> writeFavicon [
 			(PNGReadWriter on: stream) nextPutImage: (self iconNamed: #pharo) ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeFile: aFileReference do: aBlock [
 
 	aFileReference ensureCreateFile writeStreamDo: [ :stream |
 		aBlock value: stream ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeIndex [
 	"The index is a special window that uses iframes to display three pages:
 	- the main frame is on the right and shows the overview by default, and can be used to navigate to any page.
@@ -960,7 +960,7 @@ SmallDoc >> writeIndex [
 	self flag: #TODO "the full A-Z index (+ symbols)"
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeOrganization [
 	"Tree of packages, tags, classes, protocols, methods"
 
@@ -973,7 +973,7 @@ SmallDoc >> writeOrganization [
 			self encodeFooterOn: stream ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeOverview [
 
 	self writeFile: outputDirectory / 'overview.html' do: [ :stream |
@@ -983,7 +983,7 @@ SmallDoc >> writeOverview [
 		self encodeFooterOn: stream ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writePackage: package [
 
 	| classes |
@@ -1000,7 +1000,7 @@ SmallDoc >> writePackage: package [
 	package extendedClasses do: [ :class | self flag: #TODO ]
 ]
 
-{ #category : #writing }
+{ #category : 'writing' }
 SmallDoc >> writeStyles [
 
 	self writeFile: outputDirectory / 'styles.css' do: [ :stream |

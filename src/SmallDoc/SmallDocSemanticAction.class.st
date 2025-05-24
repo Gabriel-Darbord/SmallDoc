@@ -1,10 +1,11 @@
 Class {
-	#name : #SmallDocSemanticAction,
-	#superclass : #MicSemanticAction,
-	#category : #SmallDoc
+	#name : 'SmallDocSemanticAction',
+	#superclass : 'MicSemanticAction',
+	#category : 'SmallDoc',
+	#package : 'SmallDoc'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 SmallDocSemanticAction >> getClassOrNil [
 	"Ignore global variables."
 

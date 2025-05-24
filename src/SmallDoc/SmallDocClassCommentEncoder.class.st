@@ -2,12 +2,13 @@
 I handle class comments, respecting the semantics of `Microdown` to encode them as HTML.
 "
 Class {
-	#name : #SmallDocClassCommentEncoder,
-	#superclass : #SmallDocCommentEncoder,
-	#category : #SmallDoc
+	#name : 'SmallDocClassCommentEncoder',
+	#superclass : 'SmallDocCommentEncoder',
+	#category : 'SmallDoc',
+	#package : 'SmallDoc'
 }
 
-{ #category : #'visiting - document' }
+{ #category : 'visiting - document' }
 SmallDocClassCommentEncoder >> encodeImage: imageData [
 	"Encode image to PNG, write it as a Base64 String to a URI with data scheme."
 
@@ -20,19 +21,19 @@ SmallDocClassCommentEncoder >> encodeImage: imageData [
 	"use JPEG instead? it is lighter but we can clearly see the compression"
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> relativePathToRoot [
 
 	^ '..'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitAgenda: anAgenda [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitAnchor: anAnchor [
 
 	anAnchor target ifNotNil: [ self shouldBeImplemented ].
@@ -40,17 +41,21 @@ SmallDocClassCommentEncoder >> visitAnchor: anAnchor [
 	<< '"></a>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitAnchorReference: anAnchorReference [
 
-	| label |
-	self shouldBeImplemented. "not yet tested, wait for an actual case to appear"
-	stream << '<a href="#anchor-'
-	<< (label := anAnchorReference label asHTMLString) << '">' << label
-	<< '</a>'
+	| string index link label |
+	anAnchorReference reference ifNotNil: [ :reference |
+		self shouldBeImplemented "not yet tested, wait for an actual case to appear" ].
+
+	string := anAnchorReference substring.
+	index := string indexOf: $].
+	label := string copyFrom: 2 to: index - 1.
+	link := string copyFrom: index + 2 to: string size - 1.
+	stream << '<a href="#anchor-' << link << '">' << label << '</a>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitAnnotated: anAnnotated [
 
 	stream nextPutAll: '<p class="comment_annotated">'.
@@ -61,19 +66,19 @@ SmallDocClassCommentEncoder >> visitAnnotated: anAnnotated [
 	stream nextPutAll: '</p>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitAnnotation: anAnnotation [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitBreak: aBreak [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitCenter: aMicCenterBlock [
 
 	stream nextPutAll: '<div class="align-center">'.
@@ -81,13 +86,13 @@ SmallDocClassCommentEncoder >> visitCenter: aMicCenterBlock [
 	stream nextPutAll: '</div>'
 ]
 
-{ #category : #'visiting - extensions' }
+{ #category : 'visiting - extensions' }
 SmallDocClassCommentEncoder >> visitCitation: aVisitor [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitCode: aCodeBlock [
 
 	stream << '<figure><pre><code class="block lang-'
@@ -103,37 +108,37 @@ SmallDocClassCommentEncoder >> visitCode: aCodeBlock [
 	stream nextPutAll: '</code></pre></figure>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitColumn: aColumn [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitColumns: aColumns [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitComment: aComment [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitDay: aDay [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitEnvironment: anEnvironment [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitFigure: aFigure [
 	"Inline the image if it has no caption, otherwise make a <figure>.
 	Write the original text if the image is not valid."
@@ -161,19 +166,19 @@ SmallDocClassCommentEncoder >> visitFigure: aFigure [
 	stream nextPutAll: '</figure>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitFootnote: aFootnote [
 
 	stream << '<u title="' << aFootnote note << '>note</u>'
 ]
 
-{ #category : #'visiting - document' }
+{ #category : 'visiting - document' }
 SmallDocClassCommentEncoder >> visitHTTPResourceReference: aReference [
 
 	aReference uri printOn: stream
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitHeader: aHeader [
 
 	stream nextPutAll: '<div class="comment_header comment_header-'.
@@ -183,13 +188,13 @@ SmallDocClassCommentEncoder >> visitHeader: aHeader [
 	stream nextPutAll: '</div>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitHorizontalLine: anHorizontalLineBlock [
 
 	stream << '<hr/>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitInputFile: anInputfile [
 
 	| reference contents |
@@ -203,7 +208,7 @@ SmallDocClassCommentEncoder >> visitInputFile: anInputfile [
 		ifFalse: [ contents accept: self ]
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitItalic: aFormat [
 
 	stream nextPutAll: '<i>'.
@@ -211,7 +216,7 @@ SmallDocClassCommentEncoder >> visitItalic: aFormat [
 	stream nextPutAll: '</i>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitLink: aLink [
 
 	stream << '<a href="' << aLink url << '" target="_top">'.
@@ -219,7 +224,7 @@ SmallDocClassCommentEncoder >> visitLink: aLink [
 	stream nextPutAll: '</a>'
 ]
 
-{ #category : #'visiting - list' }
+{ #category : 'visiting - list' }
 SmallDocClassCommentEncoder >> visitListItem: anItem [
 
 	stream nextPutAll: '<li>'.
@@ -227,7 +232,7 @@ SmallDocClassCommentEncoder >> visitListItem: anItem [
 	stream nextPutAll: '</li>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitMath: aMicMath [
 
 	stream nextPutAll: '<figure><pre><code class="math math-block">'.
@@ -239,7 +244,7 @@ SmallDocClassCommentEncoder >> visitMath: aMicMath [
 	stream nextPutAll: '</code></pre></figure>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitMathInline: aMicMathInline [
 
 	stream nextPutAll: '<code class="math math-inline">'.
@@ -247,7 +252,7 @@ SmallDocClassCommentEncoder >> visitMathInline: aMicMathInline [
 	stream nextPutAll: '</code>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitMetaData: aMetaData [
 
 	| body pivot |
@@ -267,7 +272,7 @@ SmallDocClassCommentEncoder >> visitMetaData: aMetaData [
 		self encode: rest ]
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitMonospace: aFormat [
 
 	| ref |
@@ -292,7 +297,7 @@ SmallDocClassCommentEncoder >> visitMonospace: aFormat [
 	stream nextPutAll: '</code>'
 ]
 
-{ #category : #'visiting - list' }
+{ #category : 'visiting - list' }
 SmallDocClassCommentEncoder >> visitOrderedList: anOrderedList [
 
 	stream nextPutAll: '<ol>'.
@@ -300,7 +305,7 @@ SmallDocClassCommentEncoder >> visitOrderedList: anOrderedList [
 	stream nextPutAll: '</ol>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitParagraph: aParagraph [
 
 	stream nextPutAll: '<p>'.
@@ -308,13 +313,13 @@ SmallDocClassCommentEncoder >> visitParagraph: aParagraph [
 	stream nextPutAll: '</p>'
 ]
 
-{ #category : #'visiting - document' }
+{ #category : 'visiting - document' }
 SmallDocClassCommentEncoder >> visitPharoImageResourceReference: aReference [
 
 	self encodeImage: aReference contents
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitQuote: aQuote [
 
 	stream nextPutAll: '<blockquote>'.
@@ -322,20 +327,20 @@ SmallDocClassCommentEncoder >> visitQuote: aQuote [
 	stream nextPutAll: '</blockquote>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitRaw: aRawFormat [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitRichTextFormatConfiguration: config [
 	"Ignored for now."
 
 	self flag: #TODO "2024-06-01 one day maybe..."
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitRightAlignment: aMicRightAlignmentBlock [
 
 	stream nextPutAll: '<div class="align-right">'.
@@ -343,7 +348,7 @@ SmallDocClassCommentEncoder >> visitRightAlignment: aMicRightAlignmentBlock [
 	stream nextPutAll: '</div>'
 ]
 
-{ #category : #'visiting - extensions' }
+{ #category : 'visiting - extensions' }
 SmallDocClassCommentEncoder >> visitScript: aScriptBlock [
 
 	aScriptBlock title ifNotEmpty: [ self shouldBeImplemented ].
@@ -353,7 +358,8 @@ SmallDocClassCommentEncoder >> visitScript: aScriptBlock [
 	stream nextPutAll: aScriptBlock body asHTMLString.
 	stream nextPutAll:
 		'</code></pre><pre><code class="block result">&gt;&gt;&gt; '. ">>> "
-	self visitScriptResult: (self class evaluate: aScriptBlock body).
+	self visitScriptResult:
+		(self class compiler evaluate: aScriptBlock body).
 	stream nextPutAll: '</code></pre>'.
 	aScriptBlock hasCaption ifTrue: [
 		stream nextPutAll: '<figcaption>'.
@@ -365,7 +371,7 @@ SmallDocClassCommentEncoder >> visitScript: aScriptBlock [
 	stream nextPutAll: '</figure>'
 ]
 
-{ #category : #'visiting - extensions' }
+{ #category : 'visiting - extensions' }
 SmallDocClassCommentEncoder >> visitScriptResult: result [
 
 	result ifNil: [ ^ stream nextPutAll: '<span class="nil">nil</span>' ].
@@ -377,19 +383,19 @@ SmallDocClassCommentEncoder >> visitScriptResult: result [
 	stream nextPutAll: result printString
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitSegment: aSegment [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - extensions' }
+{ #category : 'visiting - extensions' }
 SmallDocClassCommentEncoder >> visitSlide: aSlide [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocClassCommentEncoder >> visitStrike: aFormat [
 
 	stream nextPutAll: '<s>'.
@@ -397,7 +403,7 @@ SmallDocClassCommentEncoder >> visitStrike: aFormat [
 	stream nextPutAll: '</s>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitTable: aTable [
 
 	stream nextPutAll: '<table class="comment_table">'.
@@ -424,13 +430,13 @@ SmallDocClassCommentEncoder >> visitTable: aTable [
 	stream nextPutAll: '</table>'
 ]
 
-{ #category : #visiting }
+{ #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitTalk: aTalk [
 
 	self shouldBeImplemented
 ]
 
-{ #category : #'visiting - list' }
+{ #category : 'visiting - list' }
 SmallDocClassCommentEncoder >> visitUnorderedList: anUnorderedList [
 
 	stream nextPutAll: '<ul>'.

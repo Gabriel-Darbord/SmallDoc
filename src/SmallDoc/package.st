@@ -1,1 +1,1 @@
-Package { #name : #SmallDoc }
+Package { #name : 'SmallDoc' }

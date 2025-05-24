@@ -2,21 +2,22 @@
 I am a kind of `MicrodownVisitor` for exporting comments to HTML.
 "
 Class {
-	#name : #SmallDocCommentEncoder,
-	#superclass : #MicrodownVisitor,
+	#name : 'SmallDocCommentEncoder',
+	#superclass : 'MicrodownVisitor',
 	#instVars : [
 		'stream'
 	],
-	#category : #SmallDoc
+	#category : 'SmallDoc',
+	#package : 'SmallDoc'
 }
 
-{ #category : #converting }
+{ #category : 'converting' }
 SmallDocCommentEncoder class >> encode: aString [
 
 	^ String streamContents: [ :s | self encode: aString on: s ]
 ]
 
-{ #category : #private }
+{ #category : 'private' }
 SmallDocCommentEncoder class >> encode: aString on: aWriteStream [
 
 	^ self new
@@ -24,31 +25,31 @@ SmallDocCommentEncoder class >> encode: aString on: aWriteStream [
 		  encode: aString
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 SmallDocCommentEncoder class >> on: aWriteStream [
 
 	^ self new stream: aWriteStream
 ]
 
-{ #category : #API }
+{ #category : 'API' }
 SmallDocCommentEncoder >> encode: aString [
 
 	(MicrodownParser parse: aString) accept: self
 ]
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 SmallDocCommentEncoder >> stream: aWriteStream [
 
 	stream := aWriteStream
 ]
 
-{ #category : #'visiting main API' }
+{ #category : 'visiting main API' }
 SmallDocCommentEncoder >> visitAll: aCollection [
 
 	aCollection do: [ :each | each accept: self ]
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocCommentEncoder >> visitBold: aFormat [
 
 	stream nextPutAll: '<b>'.
@@ -56,13 +57,13 @@ SmallDocCommentEncoder >> visitBold: aFormat [
 	stream nextPutAll: '</b>'
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocCommentEncoder >> visitChildrenOf: anElement [
 
 	anElement children do: [ :each | each accept: self ]
 ]
 
-{ #category : #'visiting - inline elements' }
+{ #category : 'visiting - inline elements' }
 SmallDocCommentEncoder >> visitText: aMicTextBlock [
 
 	stream nextPutAll: aMicTextBlock substring asHTMLString
