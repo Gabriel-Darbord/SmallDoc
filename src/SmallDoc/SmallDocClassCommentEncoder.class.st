@@ -289,7 +289,7 @@ SmallDocClassCommentEncoder >> visitMonospace: aFormat [
 					ifTrue: [
 					stream << entity package name << '/' << entity name << '.html' ]
 					ifFalse: [
-						self assert: entity class == RPackage.
+						self assert: entity class == Package.
 						stream << entity name << '.html' ] ].
 		stream nextPutAll: '">' ].
 	self visitChildrenOf: aFormat.
