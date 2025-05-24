@@ -28,21 +28,23 @@ Class {
 
 { #category : #writing }
 SmallDoc class >> write: packages to: outputDirectory [
+	"Overwrites all files in output directory"
 
 	^ self new
 		  packages: packages;
 		  outputDirectory: outputDirectory;
-		  write
+		  overwrite
 ]
 
 { #category : #writing }
 SmallDoc class >> write: packages to: outputDirectory title: aString [
+	"Overwrites all files in output directory"
 
 	^ self new
 		  packages: packages;
 		  outputDirectory: outputDirectory;
 		  title: aString;
-		  write
+		  overwrite
 ]
 
 { #category : #encoding }
@@ -384,7 +386,8 @@ SmallDoc >> encodeHeadTitled: headTitle relativePath: path on: stream [
 		<title>' << headTitle << ' (' << self title << ')</title>
 		<link rel="stylesheet" href="'.
 	path ifNotEmpty: [ stream << path << '/' ].
-	stream nextPutAll: 'styles.css">
+	stream << 'styles.css">
+		<link rel="icon" type="image/png" href="favicon.png">
 	</head>
 	<body>'
 ]
@@ -847,6 +850,14 @@ SmallDoc >> outputDirectory: aFileReference [
 	outputDirectory := aFileReference asFileReference
 ]
 
+{ #category : #writing }
+SmallDoc >> overwrite [
+	"Usually what you'd want"
+
+	outputDirectory ensureDeleteAll.
+	self write
+]
+
 { #category : #accessing }
 SmallDoc >> packages [
 
@@ -881,13 +892,13 @@ SmallDoc >> title: aString [
 { #category : #writing }
 SmallDoc >> write [
 
-	outputDirectory ensureDeleteAll.
 	packages do: [ :package | self writePackage: package ].
 	self writeIndex.
 	self writeOverview.
 	self writeOrganization.
 	self writeDeprecated.
 	self writeStyles.
+	self writeFavicon.
 	^ outputDirectory
 ]
 
@@ -912,6 +923,14 @@ SmallDoc >> writeDeprecated [
 		self encodeDeprecatedNavigationOn: stream.
 		self encodeDeprecatedOn: stream.
 		self encodeFooterOn: stream ]
+]
+
+{ #category : #writing }
+SmallDoc >> writeFavicon [
+
+	(outputDirectory / 'favicon.png') ensureCreateFile
+		binaryWriteStreamDo: [ :stream |
+			(PNGReadWriter on: stream) nextPutImage: (self iconNamed: #pharo) ]
 ]
 
 { #category : #writing }
