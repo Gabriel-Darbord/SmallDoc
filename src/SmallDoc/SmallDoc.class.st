@@ -206,7 +206,7 @@ SmallDoc >> encodeClass: class on: stream [
 ' << class definitionString asHTMLString << '
 					</pre>
 				</details>'.
-	class classComment ifNotEmpty: [ :comment |
+	class comment ifNotEmpty: [ :comment |
 		self encodeClassComment: comment on: stream ].
 	stream << '
 			</li>
@@ -653,7 +653,7 @@ SmallDoc >> encodeOrganizationOn: stream [
 									<a href="' << package name << '/' << class name
 					<< '.html" class="organization-class">' << class name << '</a>
 									<ul>'.
-					(class categories sort: [ :a :b | a < b ]) do: [ :protocol |
+					(class protocolNames sort: [ :a :b | a < b ]) do: [ :protocol |
 						stream << '
 										<li><span class="organization-protocol">' << protocol
 						<< '</span></li>' ].
@@ -718,7 +718,7 @@ SmallDoc >> encodeOverviewOn: stream [
 		package definedClasses
 			detect: [ :class | class superclass == PackageManifest ]
 			ifFound: [ :manifest |
-				manifest classComment ifNotEmpty: [ :comment | "read the first line of the comment"
+				manifest comment ifNotEmpty: [ :comment | "read the first line of the comment"
 					stream nextPutAll:
 						(self
 							 encodeShortComment: comment
@@ -753,7 +753,7 @@ SmallDoc >> encodePackage: package on: stream [
 <div class="header">
 	<h2 id="packageName">' << package name << '</h2>'.
 	manifest ifNotNil: [
-		manifest classComment ifNotEmpty: [ :comment |
+		manifest comment ifNotEmpty: [ :comment |
 			self encodeClassComment: comment on: stream ] ].
 	stream << '
 </div>
@@ -774,7 +774,7 @@ SmallDoc >> encodePackage: package on: stream [
 					<a href="' << class name << '.html">' << class name << '</a>
 				</td>
 				<td class="colLast">'.
-		class classComment ifNotEmpty: [ :comment | "read the first line of the comment"
+		class comment ifNotEmpty: [ :comment | "read the first line of the comment"
 			stream nextPutAll:
 				(self
 					 encodeShortComment: comment
