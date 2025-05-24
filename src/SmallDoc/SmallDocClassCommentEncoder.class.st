@@ -123,7 +123,7 @@ SmallDocClassCommentEncoder >> visitColumns: aColumns [
 { #category : 'visiting' }
 SmallDocClassCommentEncoder >> visitComment: aComment [
 
-	self shouldBeImplemented
+	stream << '<!--' << aComment text << '-->'
 ]
 
 { #category : 'visiting' }
