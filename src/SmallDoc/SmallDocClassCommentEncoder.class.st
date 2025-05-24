@@ -48,7 +48,7 @@ SmallDocClassCommentEncoder >> visitAnchorReference: anAnchorReference [
 	anAnchorReference reference ifNotNil: [ :reference |
 		self shouldBeImplemented "not yet tested, wait for an actual case to appear" ].
 
-	string := anAnchorReference substring.
+	string := anAnchorReference bodyString.
 	index := string indexOf: $].
 	label := string copyFrom: 2 to: index - 1.
 	link := string copyFrom: index + 2 to: string size - 1.
@@ -99,12 +99,12 @@ SmallDocClassCommentEncoder >> visitCode: aCodeBlock [
 	<< aCodeBlock language asLowercase asHTMLString << '">'
 	<< aCodeBlock body asHTMLString.
 	aCodeBlock hasCaption ifTrue: [
-		stream nextPutAll: '<figcaption>'.
-		aCodeBlock captionElements do: [ :element | element accept: self ].
-		stream nextPutAll: '</figcaption>' ].
-	aCodeBlock hasLabel ifTrue: [
-		stream << '<div class="code_label" hidden>'
-		<< aCodeBlock label asHTMLString << '</div>' ].
+			stream nextPutAll: '<figcaption>'.
+			aCodeBlock captionElements do: [ :element | element accept: self ].
+			stream nextPutAll: '</figcaption>' ].
+	aCodeBlock hasAnchor ifTrue: [
+			stream << '<div class="code_label" hidden>'
+			<< aCodeBlock anchor asHTMLString << '</div>' ].
 	stream nextPutAll: '</code></pre></figure>'
 ]
 
@@ -148,17 +148,17 @@ SmallDocClassCommentEncoder >> visitFigure: aFigure [
 	imageData := String streamContents: [ :s |
 		             aFigure reference accept: (self class on: s) ].
 	caption := String streamContents: [ :s | "hasCaption is always true even though it can be empty"
-		           | encoder |
-		           encoder := self class on: s.
-		           aFigure captionElements do: [ :element |
-			           element accept: encoder ] ].
+			           | encoder |
+			           encoder := self class on: s.
+			           aFigure captionElements do: [ :element |
+				           element accept: encoder ] ].
 	caption ifNotEmpty: [
-		stream << '<figure>'.
-		aFigure anchor ifNotNil: [ :anchor |
-			stream << '<a name="' << anchor asHTMLString << '"></a>' ] ].
+			stream << '<figure>'.
+			aFigure anchor ifNotNil: [ :anchor |
+				stream << '<a name="' << anchor asHTMLString << '"></a>' ] ].
 
 	stream << '<img src="' << imageData.
-	aFigure alt ifNotEmpty: [ :alt | stream << '" alt="' << alt ].
+	aFigure altText ifNotEmpty: [ :alt | stream << '" alt="' << alt ].
 	stream nextPutAll: '"/>'.
 	caption ifEmpty: [ ^ self ].
 
@@ -248,7 +248,7 @@ SmallDocClassCommentEncoder >> visitMath: aMicMath [
 SmallDocClassCommentEncoder >> visitMathInline: aMicMathInline [
 
 	stream nextPutAll: '<code class="math math-inline">'.
-	stream nextPutAll: aMicMathInline substring.
+	stream nextPutAll: aMicMathInline bodyString.
 	stream nextPutAll: '</code>'
 ]
 

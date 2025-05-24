@@ -66,5 +66,5 @@ SmallDocCommentEncoder >> visitChildrenOf: anElement [
 { #category : 'visiting - inline elements' }
 SmallDocCommentEncoder >> visitText: aMicTextBlock [
 
-	stream nextPutAll: aMicTextBlock substring asHTMLString
+	stream nextPutAll: aMicTextBlock bodyString asHTMLString
 ]
