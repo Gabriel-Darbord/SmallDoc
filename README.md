@@ -1,6 +1,6 @@
 # SmallDoc
 
-A JavaDoc-style documentation generator for Smalltalk.
+A JavaDoc-style documentation generator for Pharo Smalltalk.
 
 ## Installing
 
@@ -13,10 +13,11 @@ Metacello new
 
 ## Usage
 
-Simply supply a list of package to document, and an export path.
+Simply supply a list of package to document, a title, and an export path.
 ```st
 SmallDoc
   write: Smalltalk packages
   to: Smalltalk imagePath asFileReference parent / 'SmallDoc'
+  title: 'All Pharo Packages'
 ```
-Then open the generated `index.html` with your favorite navigator.
+Then open the generated `index.html` with your favorite web browser.
